@@ -49,3 +49,11 @@ ul {
 .game-info {
 	margin-left: 20px;
 }
+
+.step button {
+	cursor: pointer;
+}
+
+.active-step button {
+	font-weight: bold;
+}

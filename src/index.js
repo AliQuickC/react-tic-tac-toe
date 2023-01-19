@@ -113,8 +113,9 @@ class Game extends React.Component {
 				history[move].squares[clickNumber] + ' ' + // X или O
 				this.getSquareCoord(clickNumber) :			// координаты выбранной клетки
 				'К началу игры';												// если индекс массива истории игры 0
+			const activeStepClass = move === this.state.stepNumber ? 'step active-step' : 'step';
 			return (
-				<li key={move}> {/* key - номер хода */}
+				<li key={move} className={activeStepClass}> {/* key - номер хода */}
 					<button onClick={() => this.jumpTo(move)}>{desc}</button>
 				</li>
 			);
