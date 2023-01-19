@@ -79,6 +79,16 @@ class Game extends React.Component {
 		});
 	}
 
+	getDifferingSquareIndex(arr1, arr2) { // возвращает индекс отличающейся клетки, у предыдущего и текущего ходов
+		return arr1.findIndex((elem, index) => {
+			return elem !== arr2[index];
+		})
+	}
+
+	getSquareCoord(numb) {
+		return '(стр: ' + (Math.floor(numb / 3) + 1) + '; кол: ' + (Math.floor(numb % 3) + 1) + ')'
+	}
+
 	render() {
 		const history = this.state.history; // массив ходов, (включая последний ход)
 		const current = history[this.state.stepNumber]; // массив, состояние последнего хода
@@ -92,11 +102,17 @@ class Game extends React.Component {
 			status = 'Следующий ход: ' + (this.state.xIsNext ? 'X' : 'O');
 		}
 
+		// console.log('current.squares: ', current.squares);
 		// отрисовка кнопок с историей ходов игры
 		const moves = history.map((step, move) => {
+			const clickNumber = move ? this.getDifferingSquareIndex(step.squares, history[move - 1].squares) : null // индекс различающейся клетки
+
 			const desc = move ? // текст кнопки
-				'Перейти к ходу №' + move :
-				'К началу игры'; // если индекс массива 0
+				'Перейти к ходу №' +
+				move + ': ' +														// номер хода
+				history[move].squares[clickNumber] + ' ' + // X или O
+				this.getSquareCoord(clickNumber) :			// координаты выбранной клетки
+				'К началу игры';												// если индекс массива истории игры 0
 			return (
 				<li key={move}> {/* key - номер хода */}
 					<button onClick={() => this.jumpTo(move)}>{desc}</button>
