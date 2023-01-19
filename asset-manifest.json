@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/AliQuickC/react-tic-tac-toe.git/static/css/main.90b4948c.css",
+    "main.js": "/AliQuickC/react-tic-tac-toe.git/static/js/main.c81ab6ec.js",
+    "index.html": "/AliQuickC/react-tic-tac-toe.git/index.html",
+    "main.90b4948c.css.map": "/AliQuickC/react-tic-tac-toe.git/static/css/main.90b4948c.css.map",
+    "main.c81ab6ec.js.map": "/AliQuickC/react-tic-tac-toe.git/static/js/main.c81ab6ec.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.90b4948c.css",
+    "static/js/main.c81ab6ec.js"
+  ]
+}
