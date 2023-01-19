@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
+const LAST_STEP = 9;
+
 function Square(props) {
 	return (
-		<button className="square" onClick={props.onClick}>
+		<button className={props.victoryLine ? "square win-square" : "square"} onClick={props.onClick}>
 			{props.value}
 		</button>
 	);
@@ -16,6 +18,7 @@ class Board extends React.Component {
 			<Square
 				value={this.props.squares[i]}
 				onClick={() => this.props.onClick(i)}
+				victoryLine={this.props.victoryLine && this.props.victoryLine.includes(i)}
 			/>
 		);
 	}
@@ -52,6 +55,7 @@ class Game extends React.Component {
 			}],
 			stepNumber: 0, // номер хода
 			xIsNext: true, // первый ход за Х
+			victoryLine: null,
 		};
 	}
 
@@ -59,7 +63,7 @@ class Game extends React.Component {
 		const history = this.state.history.slice(0, this.state.stepNumber + 1); // новый массив состояний, от 0 до предыдущего хода
 		const current = history[history.length - 1];	// состояние предыдущего хода
 		const squares = current.squares.slice();			// копия массива, состояние предыдущего хода
-		if (calculateWinner(squares) || squares[i]) { // проверяем победу(предыдущий ход) или клетка не пустая
+		if (squares[i] || calculateWinner(squares)) { // проверяем победу(предыдущий ход) или клетка не пустая
 			return;																			// блокируем дальнейшую обработку клика
 		}
 		squares[i] = this.state.xIsNext ? 'X' : 'O';// меняем элемент массива, получаем состояние текущиего хода
@@ -69,13 +73,16 @@ class Game extends React.Component {
 			}]),
 			stepNumber: history.length, // устанавливаем текущий номер хода
 			xIsNext: !this.state.xIsNext,
+			victoryLine: calculateWinner(squares)?.vLine,
 		});
 	}
 
 	jumpTo(step) { // переход к ходу № по истории игры
+		const victoryLine = calculateWinner(this.state.history[step].squares) ? calculateWinner(this.state.history[step].squares).vLine : null
 		this.setState({
 			stepNumber: step,
 			xIsNext: (step % 2) === 0,
+			victoryLine: victoryLine,
 		});
 	}
 
@@ -97,22 +104,21 @@ class Game extends React.Component {
 		// вывод инфо о ходе игры
 		let status;
 		if (winner) {
-			status = 'Выиграл ' + winner;
+			status = 'Выиграл ' + winner.win;
 		} else {
-			status = 'Следующий ход: ' + (this.state.xIsNext ? 'X' : 'O');
+			status = this.state.stepNumber === LAST_STEP ? 'Игра закончена, победителя нет' : 'Следующий ход: ' + (this.state.xIsNext ? 'X' : 'O');
 		}
 
-		// console.log('current.squares: ', current.squares);
 		// отрисовка кнопок с историей ходов игры
 		const moves = history.map((step, move) => {
 			const clickNumber = move ? this.getDifferingSquareIndex(step.squares, history[move - 1].squares) : null // индекс различающейся клетки
 
 			const desc = move ? // текст кнопки
 				'Перейти к ходу №' +
-				move + ': ' +														// номер хода
-				history[move].squares[clickNumber] + ' ' + // X или O
-				this.getSquareCoord(clickNumber) :			// координаты выбранной клетки
-				'К началу игры';												// если индекс массива истории игры 0
+				move + ': ' +																// номер хода
+				history[move].squares[clickNumber] + ' ' +	// X или O
+				this.getSquareCoord(clickNumber) :					// координаты выбранной клетки
+				'К началу игры';														// если индекс массива истории игры 0
 			const activeStepClass = move === this.state.stepNumber ? 'step active-step' : 'step';
 			return (
 				<li key={move} className={activeStepClass}> {/* key - номер хода */}
@@ -126,6 +132,7 @@ class Game extends React.Component {
 				<div className="game-board">
 					<Board
 						squares={current.squares}
+						victoryLine = {this.state.victoryLine}
 						onClick={(i) => this.handleClick(i)}
 					/>
 				</div>
@@ -156,10 +163,11 @@ function calculateWinner(squares) {
 		[0, 4, 8],
 		[2, 4, 6],
 	];
+
 	for (let i = 0; i < lines.length; i++) {
 		const [a, b, c] = lines[i];
 		if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-			return squares[a];
+			return {win: squares[a], vLine: lines[i]};
 		}
 	}
 	return null;

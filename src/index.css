@@ -57,3 +57,7 @@ ul {
 .active-step button {
 	font-weight: bold;
 }
+
+.win-square {
+	color: red;
+}
