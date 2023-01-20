@@ -1,7 +1,6 @@
-# Deploy
+# Deploy: https://aliquickc.github.io/react-tic-tac-toe/
 
-https://aliquickc.github.io/react-tic-tac-toe/
-
+Игра на ReactJS - крестики нолики 3x3
 
 # Getting Started with Create React App
 
